@@ -132,14 +132,6 @@
       <Name>PdfSample</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Plugin.Pdf">
-      <HintPath>..\..\..\..\..\..\PdfRasterizer\PdfRasterizer\Plugin.PdfRasterizer.UWP\bin\Debug\Plugin.PdfRasterizer.dll</HintPath>
-    </Reference>
-    <Reference Include="Plugin.PdfRasterizer.Abstractions">
-      <HintPath>..\..\..\..\..\..\PdfRasterizer\PdfRasterizer\Plugin.PdfRasterizer.UWP\bin\Debug\Plugin.PdfRasterizer.Abstractions.dll</HintPath>
-    </Reference>
-  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
