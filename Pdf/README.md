@@ -23,7 +23,14 @@ Build Status: [![Build status](https://ci.appveyor.com/api/projects/status/78bt2
 
 ### API Usage
 
-Call **CrossBattery.Current** from any project or PCL to gain access to APIs.
+Call **CrossPdf.Current** from any project or PCL to gain access to APIs.
+
+*TBD*
+
+#### Roadmap
+
+* Add *checksum* and don't regenerate an already rendered document
+* Creating a Xamarin.Forms SimplePdfViewer
 
 *TBD*
 
