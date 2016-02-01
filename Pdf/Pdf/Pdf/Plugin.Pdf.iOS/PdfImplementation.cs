@@ -22,7 +22,7 @@ namespace Plugin.Pdf
             var size = rect.Size;
 
             UIGraphics.BeginImageContextWithOptions(size, false, (nfloat)(resolution / 72));
-            
+
             var context = UIGraphics.GetCurrentContext();
             context.SaveState();
             context.TranslateCTM((nfloat)0.0, size.Height);
@@ -42,22 +42,33 @@ namespace Plugin.Pdf
             return image;
         }
 
-        public Task<string[]> RenderImages(string pdfPath, string outputDirectory, double resolution)
+        private string[] Render(CGPDFDocument pdf, string outputDirectory, double resolution)
         {
-            var pdf = CGPDFDocument.FromFile(pdfPath);
             var result = new string[pdf.Pages];
 
             for (int i = 0; i < pdf.Pages; i++)
             {
                 var pagePath = string.Format("{0}/{1}.png", outputDirectory.TrimEnd(new char[] { '/', '\\' }), i);
                 var page = pdf.GetPage(i);
-                var image = RenderImage(page,resolution);
+                var image = RenderImage(page, resolution);
                 var data = image.AsPNG();
                 data.Save(pagePath, true);
                 result[i] = pagePath;
             }
-            
-            return Task.FromResult(result);
+
+            return result;
+        }
+
+        public Task<string[]> Render(string pdfPath, string outputDirectory, double resolution)
+        {
+            var pdf = CGPDFDocument.FromFile(pdfPath);
+            return Task.FromResult(this.Render(pdf, outputDirectory, resolution));
+        }
+        
+        public Task<string[]> DownloadAndRender(string pdfUrl, string outputDirectory, double resolution)
+        {
+            var pdf = CGPDFDocument.FromUrl(pdfUrl);
+            return Task.FromResult(this.Render(pdf, outputDirectory, resolution));
         }
     }
 }

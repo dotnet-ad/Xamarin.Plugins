@@ -99,13 +99,17 @@
     <PlatformTarget>x86</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
-      <DocumentationFile>bin\Release\Plugin.Pdf.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\Plugin.Pdf.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <ProjectReference Include="..\Plugin.Pdf.Abstractions\Plugin.Pdf.Abstractions.csproj">
       <Project>{6edb0588-ffc5-4ef5-8a99-9e241d0f878d}</Project>
       <Name>Plugin.Pdf.Abstractions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Plugin.Pdf\Plugin.Pdf.csproj">
+      <Project>{a6fcef44-d2ba-42c7-b3cb-13667bcd7b54}</Project>
+      <Name>Plugin.Pdf</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
