@@ -2,9 +2,9 @@ param(
      [parameter(Mandatory=$true)][string] $apikey
 )
 
-$SLN = "..\PdfRasterizer\PdfRasterizer.sln"
-$NUSPEC = ".\PdfRasterizer.Plugin.nuspec"
-$MAIN_DLL = "..\PdfRasterizer\PdfRasterizer\Plugin.PdfRasterizer\bin\Release\Plugin.PdfRasterizer.dll"
+$SLN = "$PSScriptRoot\..\PdfRasterizer\PdfRasterizer.sln"
+$NUSPEC = "$PSScriptRoot\PdfRasterizer.Plugin.nuspec"
+$MAIN_DLL = "$PSScriptRoot\..\PdfRasterizer\PdfRasterizer\Plugin.PdfRasterizer\bin\Release\Plugin.PdfRasterizer.dll"
 $MSBUILD_EXE = "C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe"
 $TOOLS_DIR = Join-Path $PSScriptRoot "tools"
 $NUGET_EXE = Join-Path $TOOLS_DIR "nuget.exe"
