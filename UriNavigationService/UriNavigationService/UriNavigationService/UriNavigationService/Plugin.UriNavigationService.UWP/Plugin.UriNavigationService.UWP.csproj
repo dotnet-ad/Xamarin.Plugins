@@ -112,6 +112,7 @@
     <Compile Include="..\Plugin.UriNavigationService\CrossUriNavigationService.cs">
       <Link>CrossUriNavigationService.cs</Link>
     </Compile>
+    <Compile Include="Actions\PageNavigation.cs" />
     <Compile Include="UriNavigationServiceExtensions.cs" />
     <Compile Include="UriNavigationServiceImplementation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
