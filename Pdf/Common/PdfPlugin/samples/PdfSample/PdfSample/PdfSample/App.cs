@@ -93,7 +93,6 @@ namespace PdfSample
                 VerticalOptions = LayoutOptions.Center,
             };
 
-
             prev.Clicked += Prev_Clicked;
             next.Clicked += Next_Clicked;
 

@@ -86,7 +86,7 @@ namespace Plugin.Pdf
 
 			var file = pdfPath.IsDistantUrl () ? this.DownloadTemporary (pdfPath) : pdfPath;
 
-			var descriptor = Context.Assets.OpenFd (pdfPath).ParcelFileDescriptor;
+			var descriptor = Context.Assets.OpenFd (file).ParcelFileDescriptor;
 
 			var pdf = new PdfRenderer (descriptor);
 
