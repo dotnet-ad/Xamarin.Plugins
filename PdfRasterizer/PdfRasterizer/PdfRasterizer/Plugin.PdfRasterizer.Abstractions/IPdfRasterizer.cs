@@ -18,13 +18,13 @@
         /// <param name="pdfPath">The relative path to the PDF file in local storage, or a distant url.</param>
         /// <param name="cachePirority">Indicates whether the already rasterized version should be taken, or images must be forced to be rasterized again.</param>
         /// <returns></returns>
-        Task<PdfDocument> Rasterize(string pdfPath, bool cachePirority = true);
+        Task<PdfDocument> RasterizeAsync(string pdfPath, bool cachePirority = true);
 
         /// <summary>
         /// Gets the locally rendered document if it has already been rasterized, else it returns null.
         /// </summary>
         /// <param name="pdfPath"></param>
         /// <returns></returns>
-        Task<PdfDocument> GetRasterized(string pdfPath);
+        Task<PdfDocument> GetRasterizedAsync(string pdfPath);
     }
 }

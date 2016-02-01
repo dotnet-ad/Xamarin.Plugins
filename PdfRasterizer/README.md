@@ -36,7 +36,7 @@ try
   
   var rasterizer = CrossPdfRasterizer.Current;
   
-  var document = await rasterizer.Rasterize(documentUrl,forceRasterize);
+  var document = await rasterizer.RasterizeAsync(documentUrl,forceRasterize);
   var pageImages = document.Pages.Select((p) => p.Path);
 }
 catch(Exception ex)
@@ -61,7 +61,7 @@ string RasterizationCacheDirectory { get; set; }
 /// <param name="pdfPath">The relative path to the PDF file in local storage, or a distant url. If a distant Url is provided, the document will be downloaded first in the temporary folder of the application.</param>
 /// <param name="cachePirority">Indicates whether the already rasterized version should be taken, or images must be forced to be rasterized again.</param>
 /// <returns>A document containing all the pages with their paths.</returns>
-Task<PdfDocument> Rasterize(string pdfPath, bool cachePirority = true);
+Task<PdfDocument> RasterizeAsync(string pdfPath, bool cachePirority = true);
 ```
 
 ```csharp
@@ -70,7 +70,7 @@ Task<PdfDocument> Rasterize(string pdfPath, bool cachePirority = true);
 /// </summary>
 /// <param name="pdfPath"></param>
 /// <returns></returns>
-Task<PdfDocument> GetRasterized(string pdfPath);
+Task<PdfDocument> GetRasterizedAsync(string pdfPath);
 ```
 
 #### Q&A
@@ -84,6 +84,7 @@ Because the `PdfRenderer` was introduced only in this version. I didn't found an
 * Adding custoization for generation location.
 * Adding more document meta-data (with maybe the original document available too)
 * Adding PDF drawing generation functionality (*iOS and Android only*)
+* Adding ability to clear a rendered pdf
 * Creating a Xamarin.Forms SimplePdfViewer
 
 ### Contributors

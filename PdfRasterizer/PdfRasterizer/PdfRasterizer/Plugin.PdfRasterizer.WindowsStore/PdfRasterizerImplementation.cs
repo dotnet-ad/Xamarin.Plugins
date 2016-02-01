@@ -108,7 +108,7 @@ namespace Plugin.PdfRasterizer
             return GetOrCreateLocalFolder(path);
         }
                 
-        public async Task<Abstractions.PdfDocument> GetRasterized(string pdfPath)
+        public async Task<Abstractions.PdfDocument> GetRasterizedAsync(string pdfPath)
         {
             var output = await GetOutputFolder(this.RasterizationCacheDirectory, pdfPath);
             
@@ -126,11 +126,11 @@ namespace Plugin.PdfRasterizer
             return null;
         }
 
-        public async Task<Abstractions.PdfDocument> Rasterize(string pdfPath, bool cachePirority = true)
+        public async Task<Abstractions.PdfDocument> RasterizeAsync(string pdfPath, bool cachePirority = true)
         {
             if(cachePirority)
             {
-                var existing = await GetRasterized(pdfPath);
+                var existing = await GetRasterizedAsync(pdfPath);
                 if(existing != null)
                 {
                     return existing;
