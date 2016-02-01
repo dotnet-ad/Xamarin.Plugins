@@ -9,12 +9,12 @@ namespace Plugin.Pdf
     /// </summary>
     public class PdfImplementation : IPdf
     {
-        public Task<string[]> Render(string pdfPath, string outputDirectory, bool replaceExisting, double resolution)
+        public Task<PdfDocument> GetRasterized(string pdfPath)
         {
             throw new NotImplementedException();
         }
 
-        public Task<string[]> DownloadAndRender(string pdfUrl, string outputDirectory, bool replaceExisting, double resolution)
+        public Task<PdfDocument> Rasterize(string pdfPath, bool cachePirority = true)
         {
             throw new NotImplementedException();
         }

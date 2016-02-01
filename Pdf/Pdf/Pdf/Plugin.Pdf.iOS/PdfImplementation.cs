@@ -3,6 +3,7 @@ using Foundation;
 using Plugin.Pdf.Abstractions;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using UIKit;
 
@@ -13,15 +14,24 @@ namespace Plugin.Pdf
     /// </summary>
     public class PdfImplementation : IPdf
     {
+        public PdfImplementation()
+        {
+            this.Hash = new Hash();
+        }
+
+        private const string LocalPdfCacheDirectory = ".pdf";
+
+        public IHash Hash { get; set; }
+
         private static readonly nfloat One = (nfloat)1.0;
 
-        private static UIImage RenderImage(CGPDFPage page, double resolution)
+        private static UIImage RenderImage(CGPDFPage page)
         {
             var rect = page.GetBoxRect(CGPDFBox.Crop);
             var pageRotation = page.RotationAngle;
             var size = rect.Size;
 
-            UIGraphics.BeginImageContextWithOptions(size, false, (nfloat)(resolution / 72));
+            UIGraphics.BeginImageContextWithOptions(size, false, (nfloat)(1));
 
             var context = UIGraphics.GetCurrentContext();
             context.SaveState();
@@ -42,7 +52,7 @@ namespace Plugin.Pdf
             return image;
         }
 
-        private string[] Render(CGPDFDocument pdf, string outputDirectory, double resolution)
+        private string[] Render(CGPDFDocument pdf, string outputDirectory)
         {
             var result = new string[pdf.Pages];
 
@@ -50,7 +60,7 @@ namespace Plugin.Pdf
             {
                 var pagePath = string.Format("{0}/{1}.png", outputDirectory.TrimEnd(new char[] { '/', '\\' }), i);
                 var page = pdf.GetPage(i);
-                var image = RenderImage(page, resolution);
+                var image = RenderImage(page);
                 var data = image.AsPNG();
                 data.Save(pagePath, true);
                 result[i] = pagePath;
@@ -59,16 +69,22 @@ namespace Plugin.Pdf
             return result;
         }
 
-        public Task<string[]> Render(string pdfPath, string outputDirectory, bool replaceExisting, double resolution)
+        public Task<Abstractions.PdfDocument> Rasterize(string pdfPath, bool cachePirority = true)
         {
-            var pdf = CGPDFDocument.FromFile(pdfPath);
-            return Task.FromResult(this.Render(pdf, outputDirectory, resolution));
+            var pdf = pdfPath.IsDistantUrl() ? CGPDFDocument.FromUrl(pdfPath) : CGPDFDocument.FromFile(pdfPath);
+
+            var hash = localName == null ? this.Hash.Create(pdfPath) : localName;
+            var path = (LocalPdfCacheDirectory.ToFolderPath() + hash).ToFolderPath();
+            var pagesPaths = this.Render(pdf, path);
+            return Task.FromResult(new PdfDocument()
+            {
+                Pages = pagesPaths.Select((p) => new PdfPage() { Path = p }),
+            });
         }
-        
-        public Task<string[]> DownloadAndRender(string pdfUrl, string outputDirectory, bool replaceExisting, double resolution)
+
+        public Task<PdfDocument> GetRasterized(string pdfPath)
         {
-            var pdf = CGPDFDocument.FromUrl(pdfUrl);
-            return Task.FromResult(this.Render(pdf, outputDirectory, resolution));
+            throw new NotImplementedException();
         }
     }
 }

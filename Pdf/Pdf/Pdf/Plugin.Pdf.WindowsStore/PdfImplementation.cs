@@ -1,5 +1,6 @@
 using Plugin.Pdf.Abstractions;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,14 +18,21 @@ namespace Plugin.Pdf
         public PdfImplementation()
         {
             this.HttpClient = new HttpClient();
+            this.Hash = new Hash();
         }
 
+        private const string LocalPdfCacheDirectory = ".pdf";
+
+        private const string MetaFile = "__meta";
+
+        public IHash Hash { get; set; }
+        
         public HttpClient HttpClient { get; set; }
 
         private static async Task<StorageFolder> GetOrCreateLocalFolder(string path)
         {
             StorageFolder folder = ApplicationData.Current.LocalFolder;
-            var splits = path.Split(new char[] { '/', '\\' });
+            var splits = path.SplitPath();
 
             for (int i = 0; i < splits.Length; i++)
             {
@@ -37,7 +45,7 @@ namespace Plugin.Pdf
 
         private static async Task<StorageFile> GetLocalFile(string path)
         {
-            var splits = path.Split(new char[] { '/', '\\' });
+            var splits = path.SplitPath();
 
             var folder = await GetOrCreateLocalFolder(string.Join("/",splits.Take(splits.Count() - 1).ToArray()));
             var last = splits.LastOrDefault();
@@ -58,11 +66,11 @@ namespace Plugin.Pdf
             return file;
         }
 
-        private static async Task<string> RenderPage(PdfPage page, StorageFolder output)
+        private static async Task<string> RenderPage(Windows.Data.Pdf.PdfPage page, StorageFolder output)
         {
             var pagePath = string.Format("{0}.png", page.Index);
             var pageFile = await output.CreateFileAsync(pagePath, CreationCollisionOption.ReplaceExisting);
-
+            
             using (var imageStream = await pageFile.OpenAsync(FileAccessMode.ReadWrite))
             {
                 PdfPageRenderOptions pdfPageRenderOptions = new PdfPageRenderOptions();
@@ -71,13 +79,13 @@ namespace Plugin.Pdf
                 await imageStream.FlushAsync();
             }
 
-            return FormatFolderPath(output) + pagePath;
+            return output.Path.ToFolderPath() + pagePath;
         }
 
-        private async Task<string[]> Render(StorageFile file, StorageFolder outputDirectory, double resolution)
+        private async Task<string[]> Rasterize(StorageFile file, StorageFolder outputDirectory)
         {            
-            var doc = await PdfDocument.LoadFromFileAsync(file);
-
+            var doc = await Windows.Data.Pdf.PdfDocument.LoadFromFileAsync(file);
+            
             var result = new string[doc.PageCount];
 
             for (int i = 0; i < doc.PageCount; i++)
@@ -86,67 +94,62 @@ namespace Plugin.Pdf
                 result[i] = await RenderPage(page, outputDirectory);
             }
 
+            await outputDirectory.CreateFileAsync(MetaFile, CreationCollisionOption.ReplaceExisting);
+
             return result;
         }
-
-        private static string FormatFolderPath(StorageFolder folder)
-        {
-            return folder.Path.Replace('\\', '/').TrimEnd(new char[] { '/' }) + "/";
-        }
-
-
-        private static string FormatFilePath(StorageFile folder)
-        {
-            return folder.Path.Replace('\\', '/');
-        }
-
+        
         private Task<StorageFolder> GetOutputFolder(string output, string url)
         {
-            var path = output.TrimEnd(new char[] { '\\', '/' }) + "/" + Path.GetFileName(url);
+            var hash = this.Hash.Create(url);
+            var path = (output.ToFolderPath() + hash).ToFolderPath();
             return GetOrCreateLocalFolder(path);
         }
-
-        private async Task<string[]> GetAlreadyRenderedPages(StorageFolder dir)
+                
+        public async Task<Abstractions.PdfDocument> GetRasterized(string pdfPath)
         {
-            var files = await dir.GetFilesAsync();
-            return files.Select((f) => FormatFilePath(f)).ToArray();
-        }
-
-        public async Task<string[]> Render(string pdfPath, string outputDirectory, bool replaceExisting, double resolution)
-        {
-            var output = await GetOutputFolder(outputDirectory,pdfPath);
-
-            if(!replaceExisting)
-            {
-                var rendered = await GetAlreadyRenderedPages(output);
-
-                if (rendered.Any())
-                {
-                    return rendered;
-                }
-            }
+            var output = await GetOutputFolder(LocalPdfCacheDirectory, pdfPath);
             
-            var file = await GetLocalFile(pdfPath);
-            return await Render(file, output, resolution);
+            var files = await output.GetFilesAsync();
+
+            if (files.Any((p) => p.Name == MetaFile))
+            {
+                var rendered = files.Where((p) => p.Name != MetaFile).Select((f) => f.Path.ToFilePath()).ToArray();
+                return new Abstractions.PdfDocument()
+                {
+                    Pages = rendered.Select((p) => new Abstractions.PdfPage() { Path = p }),
+                };
+            }
+
+            return null;
         }
 
-
-        public async Task<string[]> DownloadAndRender(string pdfUrl, string outputDirectory, bool replaceExisting, double resolution)
+        public async Task<Abstractions.PdfDocument> Rasterize(string pdfPath, bool cachePirority = true)
         {
-            var output = await GetOutputFolder(outputDirectory, pdfUrl);
-
-            if (!replaceExisting)
+            if(cachePirority)
             {
-                var rendered = await GetAlreadyRenderedPages(output);
-
-                if (rendered.Any())
+                var existing = await GetRasterized(pdfPath);
+                if(existing != null)
                 {
-                    return rendered;
+                    return existing;
                 }
             }
 
-            var file = await DownloadTemporary(pdfUrl);
-            return await Render(file, output, resolution);
+            var output = await GetOutputFolder(LocalPdfCacheDirectory, pdfPath);
+            
+            // First we remove any existing file
+            var files = await output.GetFilesAsync();
+            await Task.WhenAll(files.Select((f) => f.DeleteAsync().AsTask()).ToArray());
+            
+            var file = pdfPath.IsDistantUrl() ? await DownloadTemporary(pdfPath) : await GetLocalFile(pdfPath);
+            
+            var pagesPaths = await Rasterize(file, output);
+          
+            return new Abstractions.PdfDocument()
+            {
+                Pages = pagesPaths.Select((p) => new Abstractions.PdfPage() { Path = p }),
+            };
         }
+        
     }
 }

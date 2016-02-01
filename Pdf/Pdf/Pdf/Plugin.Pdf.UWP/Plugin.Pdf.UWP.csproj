@@ -109,6 +109,9 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Plugin.Pdf.WindowsStore\Hash.cs">
+      <Link>Hash.cs</Link>
+    </Compile>
     <Compile Include="..\Plugin.Pdf.WindowsStore\PdfImplementation.cs">
       <Link>PdfImplementation.cs</Link>
     </Compile>

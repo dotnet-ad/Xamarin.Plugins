@@ -6,6 +6,7 @@ using Java.IO;
 using Plugin.Pdf.Abstractions;
 using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -17,26 +18,34 @@ namespace Plugin.Pdf
   /// </summary>
   public class PdfImplementation : IPdf
     {
+        public PdfImplementation()
+        {
+            this.Hash = new Hash();
+            this.Context = Application.Context;
+        }
+
+        private const string LocalPdfCacheDirectory = ".pdf";
+
+        public IHash Hash { get; set; }
+
         // API > 21 :
         // http://developer.android.com/reference/android/graphics/pdf/PdfRenderer.html
         // https://github.com/googlesamples/android-PdfRendererBasic
         // https://github.com/voghDev/PdfViewPager
 
-        public PdfImplementation()
-        {
-            this.Context = Application.Context;
-        }
-
         public Context Context { get; set; }
-        
-        private static Bitmap RenderImage(PdfRenderer.Page page, double resolution)
+
+
+        private static Bitmap RenderImage(PdfRenderer.Page page)
         {
             var bitmap = Bitmap.CreateBitmap (page.Width, page.Height,Bitmap.Config.Argb8888);
             page.Render(bitmap, null, null, PdfRenderMode.ForDisplay);
             return bitmap;
         }
 
-        private string[] Render(PdfRenderer pdf, string outputDirectory, double resolution)
+
+
+        private string[] Render(PdfRenderer pdf, string outputDirectory)
         {
             var result = new string[pdf.PageCount];
 
@@ -44,13 +53,13 @@ namespace Plugin.Pdf
             {
                 var pagePath = string.Format("{0}/{1}.png", outputDirectory.TrimEnd(new char[] { '/', '\\' }), i);
                 var page = pdf.OpenPage(i);
-                var image = RenderImage(page, resolution);
+                var image = RenderImage(page);
 
                 using (var fs = new FileStream(pagePath, FileMode.CreateNew))
                 {
                     image.Compress(Bitmap.CompressFormat.Png, 95, fs);
                 }
-
+                
                 result[i] = pagePath;
 
                 page.Close();
@@ -69,18 +78,31 @@ namespace Plugin.Pdf
             }
         }
 
-        public Task<string[]> Render(string pdfPath, string outputDirectory, bool replaceExisting, double resolution)
+        public async Task<Abstractions.PdfDocument> GetRasterized(string pdfPath)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Abstractions.PdfDocument> Rasterize(string pdfPath,bool cachePirority = true)
         {
             CheckApiLevel();
+
+            var file = pdfPath.IsDistantUrl() ? this.DownloadTemporary(pdfPath) : pdfPath;
 
             var descriptor = Context.Assets.OpenFd(pdfPath).ParcelFileDescriptor;
 
             var pdf = new PdfRenderer(descriptor);
-            var result = this.Render(pdf, outputDirectory, resolution);
+            
+            var hash = localName == null ? this.Hash.Create(pdfPath) : localName;
+            var path = (LocalPdfCacheDirectory.ToFolderPath() + hash).ToFolderPath();
+            var pagesPaths =  this.Render(pdf, path);
 
             descriptor.Close();
 
-            return Task.FromResult(result);
+            return Task.FromResult(new Abstractions.PdfDocument()
+            {
+                Pages = pagesPaths.Select((p) => new PdfPage() { Path = p }),
+            });
         }
 
         #region Download and render
@@ -94,13 +116,7 @@ namespace Plugin.Pdf
 
             return tempName;
         }
-
-        public async Task<string[]> DownloadAndRender(string pdfUrl, string outputDirectory, bool replaceExisting, double resolution)
-        {
-            var path = this.DownloadTemporary(pdfUrl);
-            return await this.Render(path, outputDirectory, replaceExisting, resolution);
-        }
-
+        
         #endregion
     }
 }
