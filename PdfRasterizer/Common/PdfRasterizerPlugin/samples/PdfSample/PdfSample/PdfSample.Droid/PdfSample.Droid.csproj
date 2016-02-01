@@ -50,14 +50,6 @@
   <ItemGroup>
     <Reference Include="Mono.Android" />
     <Reference Include="mscorlib" />
-    <Reference Include="Plugin.PdfRasterizer, Version=0.3.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Xam.Plugin.PdfRasterizer.0.3.2.0\lib\MonoAndroid10\Plugin.PdfRasterizer.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Plugin.PdfRasterizer.Abstractions, Version=0.3.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Xam.Plugin.PdfRasterizer.0.3.2.0\lib\MonoAndroid10\Plugin.PdfRasterizer.Abstractions.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />

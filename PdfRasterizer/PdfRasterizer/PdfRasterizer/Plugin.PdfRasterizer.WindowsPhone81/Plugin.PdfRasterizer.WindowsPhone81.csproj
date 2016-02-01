@@ -87,6 +87,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\SharedAssemblyInfo.cs">
+      <Link>Properties\SharedAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="..\Plugin.PdfRasterizer\CrossPdfRasterizer.cs">
       <Link>CrossPdfRasterizer.cs</Link>
     </Compile>

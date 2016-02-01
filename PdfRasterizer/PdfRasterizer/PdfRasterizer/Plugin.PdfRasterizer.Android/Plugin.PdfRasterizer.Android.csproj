@@ -42,6 +42,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\SharedAssemblyInfo.cs">
+      <Link>Properties\SharedAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="..\Plugin.PdfRasterizer.iOS\PdfRasterizerImplementation.cs">
       <Link>PdfRasterizerImplementation.cs</Link>
     </Compile>
