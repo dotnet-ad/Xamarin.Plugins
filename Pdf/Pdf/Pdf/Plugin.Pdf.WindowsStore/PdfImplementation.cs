@@ -71,13 +71,11 @@ namespace Plugin.Pdf
                 await imageStream.FlushAsync();
             }
 
-            return output.Path.Replace('\\','/').TrimEnd(new char[] { '/' }) + "/" + pagePath;
+            return FormatFolderPath(output) + pagePath;
         }
 
-        private async Task<string[]> Render(StorageFile file, string outputDirectory, double resolution)
-        {
-            var output = await GetOrCreateLocalFolder(outputDirectory);
-
+        private async Task<string[]> Render(StorageFile file, StorageFolder outputDirectory, double resolution)
+        {            
             var doc = await PdfDocument.LoadFromFileAsync(file);
 
             var result = new string[doc.PageCount];
@@ -85,23 +83,70 @@ namespace Plugin.Pdf
             for (int i = 0; i < doc.PageCount; i++)
             {
                 var page = doc.GetPage((uint)i);
-                result[i] = await RenderPage(page, output);
+                result[i] = await RenderPage(page, outputDirectory);
             }
 
             return result;
         }
 
-        public async Task<string[]> Render(string pdfPath, string outputDirectory, double resolution)
+        private static string FormatFolderPath(StorageFolder folder)
         {
-            var file = await GetLocalFile(pdfPath);
-            return await Render(file,outputDirectory,resolution);
+            return folder.Path.Replace('\\', '/').TrimEnd(new char[] { '/' }) + "/";
         }
 
 
-        public async Task<string[]> DownloadAndRender(string pdfUrl, string outputDirectory, double resolution)
+        private static string FormatFilePath(StorageFile folder)
         {
+            return folder.Path.Replace('\\', '/');
+        }
+
+        private Task<StorageFolder> GetOutputFolder(string output, string url)
+        {
+            var path = output.TrimEnd(new char[] { '\\', '/' }) + "/" + Path.GetFileName(url);
+            return GetOrCreateLocalFolder(path);
+        }
+
+        private async Task<string[]> GetAlreadyRenderedPages(StorageFolder dir)
+        {
+            var files = await dir.GetFilesAsync();
+            return files.Select((f) => FormatFilePath(f)).ToArray();
+        }
+
+        public async Task<string[]> Render(string pdfPath, string outputDirectory, bool replaceExisting, double resolution)
+        {
+            var output = await GetOutputFolder(outputDirectory,pdfPath);
+
+            if(!replaceExisting)
+            {
+                var rendered = await GetAlreadyRenderedPages(output);
+
+                if (rendered.Any())
+                {
+                    return rendered;
+                }
+            }
+            
+            var file = await GetLocalFile(pdfPath);
+            return await Render(file, output, resolution);
+        }
+
+
+        public async Task<string[]> DownloadAndRender(string pdfUrl, string outputDirectory, bool replaceExisting, double resolution)
+        {
+            var output = await GetOutputFolder(outputDirectory, pdfUrl);
+
+            if (!replaceExisting)
+            {
+                var rendered = await GetAlreadyRenderedPages(output);
+
+                if (rendered.Any())
+                {
+                    return rendered;
+                }
+            }
+
             var file = await DownloadTemporary(pdfUrl);
-            return await Render(file, outputDirectory, resolution);
+            return await Render(file, output, resolution);
         }
     }
 }

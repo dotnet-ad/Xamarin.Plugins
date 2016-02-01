@@ -69,7 +69,7 @@ namespace Plugin.Pdf
             }
         }
 
-        public Task<string[]> Render(string pdfPath, string outputDirectory, double resolution)
+        public Task<string[]> Render(string pdfPath, string outputDirectory, bool replaceExisting, double resolution)
         {
             CheckApiLevel();
 
@@ -95,10 +95,10 @@ namespace Plugin.Pdf
             return tempName;
         }
 
-        public async Task<string[]> DownloadAndRender(string pdfUrl, string outputDirectory, double resolution)
+        public async Task<string[]> DownloadAndRender(string pdfUrl, string outputDirectory, bool replaceExisting, double resolution)
         {
             var path = this.DownloadTemporary(pdfUrl);
-            return await this.Render(path, outputDirectory, resolution);
+            return await this.Render(path, outputDirectory, replaceExisting, resolution);
         }
 
         #endregion
