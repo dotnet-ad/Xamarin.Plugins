@@ -9,7 +9,12 @@ namespace Plugin.Pdf
     /// </summary>
     public class PdfImplementation : IPdf
     {
-        public Task<string[]> RenderImages(string pdfPath, string outputDirectory, double resolution)
+        public Task<string[]> Render(string pdfPath, string outputDirectory, double resolution)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<string[]> DownloadAndRender(string pdfUrl, string outputDirectory, double resolution)
         {
             throw new NotImplementedException();
         }

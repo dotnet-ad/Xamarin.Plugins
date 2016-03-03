@@ -15,6 +15,8 @@ namespace Plugin.Pdf.Abstractions
         /// <param name="outputDirectory">The relative path to the output directory where the images will be generated.</param>
         /// <param name="resolution"></param>
         /// <returns></returns>
-        Task<string[]> RenderImages(string pdfPath, string outputDirectory, double resolution);
-  }
+        Task<string[]> Render(string pdfPath, string outputDirectory, double resolution);
+
+        Task<string[]> DownloadAndRender(string pdfUrl, string outputDirectory, double resolution);
+    }
 }
