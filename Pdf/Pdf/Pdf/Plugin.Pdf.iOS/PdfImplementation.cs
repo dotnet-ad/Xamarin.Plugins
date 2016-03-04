@@ -59,13 +59,13 @@ namespace Plugin.Pdf
             return result;
         }
 
-        public Task<string[]> Render(string pdfPath, string outputDirectory, double resolution)
+        public Task<string[]> Render(string pdfPath, string outputDirectory, bool replaceExisting, double resolution)
         {
             var pdf = CGPDFDocument.FromFile(pdfPath);
             return Task.FromResult(this.Render(pdf, outputDirectory, resolution));
         }
         
-        public Task<string[]> DownloadAndRender(string pdfUrl, string outputDirectory, double resolution)
+        public Task<string[]> DownloadAndRender(string pdfUrl, string outputDirectory, bool replaceExisting, double resolution)
         {
             var pdf = CGPDFDocument.FromUrl(pdfUrl);
             return Task.FromResult(this.Render(pdf, outputDirectory, resolution));
