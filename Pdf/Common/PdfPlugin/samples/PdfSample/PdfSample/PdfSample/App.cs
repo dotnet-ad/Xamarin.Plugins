@@ -17,6 +17,8 @@ namespace PdfSample
 
         Entry input;
 
+        Label message;
+
         ActivityIndicator indicator;
 
         public App()
@@ -25,9 +27,17 @@ namespace PdfSample
             input = new Entry();
             input.Text = "https://developer.xamarin.com/guides/xamarin-forms/getting-started/introduction-to-xamarin-forms/offline.pdf";
 
+            var cacheLabel = new Label()
+            {
+                Text = "Use cache : ",
+                TextColor = Color.White,
+                VerticalOptions = LayoutOptions.Center,
+            };
+
             useCacheSwitch = new Switch()
             {
                 IsToggled = true,
+
             };
 
             var loadButton = new Button()
@@ -37,11 +47,21 @@ namespace PdfSample
             
             loadButton.Clicked += LoadButton_Clicked;
 
-            var panel = new StackLayout()
+            Grid.SetColumn(cacheLabel, 1);
+            Grid.SetColumn(useCacheSwitch, 2);
+            Grid.SetColumn(loadButton, 3);
+
+            var panel = new Grid()
             {
+                ColumnDefinitions = new ColumnDefinitionCollection()
+                {
+                    new ColumnDefinition(),
+                    new ColumnDefinition() { Width = new GridLength(1,GridUnitType.Auto) },
+                    new ColumnDefinition() { Width = new GridLength(100) },
+                    new ColumnDefinition() { Width = new GridLength(80) },
+                },
                 HorizontalOptions = LayoutOptions.FillAndExpand,
-                Orientation = StackOrientation.Horizontal,
-                Children = { input, useCacheSwitch, loadButton }
+                Children = { input, cacheLabel, useCacheSwitch, loadButton }
             };
 
             //Content area
@@ -60,6 +80,13 @@ namespace PdfSample
                 VerticalOptions = LayoutOptions.Center,
             };
 
+            message = new Label()
+            {
+                TextColor = Color.White,
+                VerticalOptions = LayoutOptions.Center,
+                HorizontalOptions = LayoutOptions.Center,
+            };
+
             indicator = new ActivityIndicator()
             {
                 HorizontalOptions = LayoutOptions.Center,
@@ -74,6 +101,7 @@ namespace PdfSample
             Grid.SetRow(image, 1);
             Grid.SetRow(prev, 1);
             Grid.SetRow(next, 1);
+            Grid.SetRow(message, 1);
             Grid.SetRow(indicator, 1);
 
             // The root page of your application
@@ -81,6 +109,7 @@ namespace PdfSample
             {
                 Content = new Grid()
                 {
+                    BackgroundColor = Color.Black,
                     RowDefinitions = new RowDefinitionCollection() { new RowDefinition() { Height = new GridLength(50) }, new RowDefinition() },
                     Children =
                     {
@@ -88,6 +117,7 @@ namespace PdfSample
                         image,
                         prev,
                         next,
+                        message,
                         indicator,
                     }
                 }
@@ -121,6 +151,9 @@ namespace PdfSample
             this.indicator.IsRunning = true;
             this.indicator.IsVisible = true;
 
+            message.IsVisible = false;
+            message.Text = string.Empty;
+
             try
             {
                 image.Source = null;
@@ -130,8 +163,8 @@ namespace PdfSample
             }
             catch (Exception e)
             {
-
-                throw e;
+                message.Text = e.Message;
+                message.IsVisible = true;
             }
             finally
             {
