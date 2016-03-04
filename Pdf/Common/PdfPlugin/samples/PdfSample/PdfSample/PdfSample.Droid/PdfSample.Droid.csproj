@@ -54,6 +54,12 @@
     </Reference>
     <Reference Include="Mono.Android" />
     <Reference Include="mscorlib" />
+    <Reference Include="Plugin.Pdf">
+      <HintPath>..\..\..\..\..\..\Pdf\Pdf\Plugin.Pdf.Android\bin\Debug\Plugin.Pdf.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.Pdf.Abstractions">
+      <HintPath>..\..\..\..\..\..\Pdf\Pdf\Plugin.Pdf.Android\bin\Debug\Plugin.Pdf.Abstractions.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />

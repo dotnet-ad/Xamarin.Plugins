@@ -11,12 +11,12 @@ namespace Plugin.Pdf.Abstractions
         /// <summary>
         /// Renders a local PDF file as a set of page images.
         /// </summary>
-        /// <param name="pdfPath">The relative path to the PDF file in local storage.</param>
+        /// <param name="pdfPath">The relative path to the PDF file in local storage, or a distant url.</param>
         /// <param name="outputDirectory">The relative path to the output directory where the images will be generated.</param>
         /// <param name="resolution"></param>
         /// <returns></returns>
-        Task<string[]> Render(string pdfPath, string outputDirectory, bool replaceExisting, double resolution);
+        Task<PdfDocument> Rasterize(string pdfPath, bool cachePirority = true);
 
-        Task<string[]> DownloadAndRender(string pdfUrl, string outputDirectory, bool replaceExisting, double resolution);
+        Task<PdfDocument> GetRasterized(string pdfPath);
     }
 }

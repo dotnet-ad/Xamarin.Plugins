@@ -116,6 +116,7 @@
     <Compile Include="..\Plugin.Pdf\CrossPdf.cs">
       <Link>CrossPdf.cs</Link>
     </Compile>
+    <Compile Include="Hash.cs" />
     <Compile Include="PdfImplementation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

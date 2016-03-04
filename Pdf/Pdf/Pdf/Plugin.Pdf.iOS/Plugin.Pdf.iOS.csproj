@@ -35,6 +35,9 @@
     <DocumentationFile>bin\iPhone\Release\Plugin.Pdf.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\Plugin.Pdf.Android\Hash.cs">
+      <Link>Hash.cs</Link>
+    </Compile>
     <Compile Include="..\Plugin.Pdf\CrossPdf.cs">
       <Link>CrossPdf.cs</Link>
     </Compile>
