@@ -1,3 +1,4 @@
+using Android.App;
 using Android.Content;
 using Android.Graphics;
 using Android.Graphics.Pdf;
@@ -15,16 +16,19 @@ namespace Plugin.Pdf
   /// Implementation for Feature
   /// </summary>
   public class PdfImplementation : IPdf
-  {
-        public static Context Context { get; set; }
-
+    {
         // API > 21 :
         // http://developer.android.com/reference/android/graphics/pdf/PdfRenderer.html
         // https://github.com/googlesamples/android-PdfRendererBasic
         // https://github.com/voghDev/PdfViewPager
 
-        // Testing api level : android.os.Build.VERSION
+        public PdfImplementation()
+        {
+            this.Context = Application.Context;
+        }
 
+        public Context Context { get; set; }
+        
         private static Bitmap RenderImage(PdfRenderer.Page page, double resolution)
         {
             var bitmap = Bitmap.CreateBitmap (page.Width, page.Height,Bitmap.Config.Argb8888);
