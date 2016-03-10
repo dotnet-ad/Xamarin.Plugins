@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PdfSample.Views.Pages.ViewerPage">
+  
+  <Grid>
+    
+    <!-- Definition -->
+      
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="2*" />
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="2*" />
+    </Grid.ColumnDefinitions>
+  
+    <!-- Row 0 -->
+    
+    <Entry 
+      x:Name="pathEntry"
+      Grid.Row="0"
+      Grid.ColumnSpan="3" />  
+    
+    <!-- Row 1 -->
+    
+    <Switch 
+      x:Name="cacheSwitch" 
+      Grid.Row="1" 
+      Grid.Column="0"
+      IsToggled="True"/>
+    
+    <Button 
+      Grid.Row="1" 
+      Grid.Column="2" 
+      Clicked="OnLoadClicked" 
+      Text="Load" />
+    
+    <!-- Row 2 -->
+    
+    <BoxView 
+      Grid.Row="2" 
+      Grid.ColumnSpan="3"
+      BackgroundColor="Black" />
+      
+    <Image 
+      x:Name="pageImage"
+      Grid.Row="2" 
+      Grid.ColumnSpan="3" />
+    
+    <Label
+      x:Name="errorMessage"
+      Grid.Row="2" 
+      Grid.ColumnSpan="3"
+      IsVisible="False" />
+    
+    <ActivityIndicator
+      x:Name="activityIndicator"
+      Grid.Row="2" 
+      Grid.ColumnSpan="3" />
+    
+    <!-- Row 3 -->
+    
+    <Button 
+      x:Name="previousButton" 
+      Grid.Row="3" 
+      Grid.Column="0" 
+      Text="&lt;"
+      Clicked="OnPreviousClicked" />
+    
+    <Label
+      x:Name="pageNumberLabel"
+      Grid.Row="3"
+      Grid.Column="1"
+      HorizontalTextAlignment="Center"
+      VerticalTextAlignment="Center"/>
+      
+    <Button 
+      x:Name="nextButton" 
+      Grid.Row="3" 
+      Grid.Column="2" 
+      Text="&gt;"
+      Clicked="OnNextClicked" />
+
+  </Grid>
+
+</ContentPage>
