@@ -1,13 +1,22 @@
-using CoreGraphics;
-using Foundation;
+
 using Plugin.Pdf.Abstractions;
 using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using UIKit;
 using System.Diagnostics;
 using System.Net;
+using System.ComponentModel;
+
+#if DROID
+using Android.Graphics.Pdf;
+using Android.Graphics;
+using Android.App;
+#else
+using UIKit;
+using CoreGraphics;
+using Foundation;
+#endif
 
 namespace Plugin.Pdf
 {
@@ -26,6 +35,54 @@ namespace Plugin.Pdf
 		private const string MetaFile = "__meta";
 
 		public IHash Hash { get; set; }
+
+
+		#if DROID
+
+		private static Bitmap RenderImage (PdfRenderer.Page page)
+		{
+			var bitmap = Bitmap.CreateBitmap (page.Width, page.Height, Bitmap.Config.Argb8888);
+
+			// Fill with default while color first
+			var canvas = new Canvas(bitmap);
+			var paint = new Paint ()
+			{
+				Color = Color.White
+			};
+			canvas.DrawRect (new Rect (0, 0, page.Width, page.Height), paint);
+
+			// Render content
+			page.Render (bitmap, null, null, PdfRenderMode.ForDisplay);
+			return bitmap;
+		}
+
+		private string[] Render (PdfRenderer pdf, string outputDirectory)
+		{
+			var result = new string[pdf.PageCount];
+
+			for (int i = 0; i < pdf.PageCount; i++) {
+				var pagePath = string.Format ("{0}/{1}.png", outputDirectory.TrimEnd (new char[] { '/', '\\' }), i);
+				var page = pdf.OpenPage (i);
+				var image = RenderImage (page);
+
+				using (var fs = new FileStream (pagePath, FileMode.CreateNew)) {
+					image.Compress (Bitmap.CompressFormat.Png, 95, fs);
+				}
+
+				result [i] = pagePath;
+
+				page.Close ();
+			}
+
+			pdf.Close ();
+
+			var metaPath = string.Format ("{0}/{1}", outputDirectory.TrimEnd (new char[] { '/', '\\' }), MetaFile);
+			File.Create (metaPath);
+
+			return result;
+		}
+
+		#else
 
 		private static readonly nfloat One = (nfloat)1.0;
 
@@ -59,11 +116,7 @@ namespace Plugin.Pdf
 
 		private string[] Render (CGPDFDocument pdf, string outputDirectory)
 		{
-			Debug.WriteLine ("ISNULL:" + (pdf == null));
-
 			var result = new string[pdf.Pages];
-
-			Directory.CreateDirectory(outputDirectory);
 
 			for (int i = 0; i < pdf.Pages; i++) {
 				var pagePath = string.Format ("{0}/{1}.png", outputDirectory.TrimEnd (new char[] { '/', '\\' }), i);
@@ -82,12 +135,25 @@ namespace Plugin.Pdf
 
 			return result;
 		}
+		#endif
 
-		private string GetLocalPath(string pdfPath)
+		private string GetLocalPath(string pdfPath, bool deleteFirst)
 		{
 			var documents = Environment.GetFolderPath (Environment.SpecialFolder.MyDocuments);
 			var hash = this.Hash.Create (pdfPath);
-			return documents.AppendPath ((LocalPdfCacheDirectory.ToFolderPath () + hash).ToFolderPath ());
+			var result = documents.AppendPath ((LocalPdfCacheDirectory.ToFolderPath () + hash).ToFolderPath ());
+
+			// Deletes content and folder first if requested
+			if (deleteFirst) {
+				var files = Directory.GetFiles (result);
+				foreach (var item in files) {
+					File.Delete (item);
+				}
+				Directory.Delete (result);
+			}
+
+			Directory.CreateDirectory(result);
+			return result;
 		}
 
 		public async Task<Abstractions.PdfDocument> Rasterize (string pdfPath, bool cachePirority = true)
@@ -97,52 +163,89 @@ namespace Plugin.Pdf
 				var existing = await GetRasterized(pdfPath);
 				if(existing != null)
 				{
+					Debug.WriteLine("Using cached images ...");
+
 					return existing;
 				}
 			}
 
+			Debug.WriteLine("Downloading and generating again ...");
+
+			var localpath = pdfPath.IsDistantUrl () ? await this.DownloadTemporary (pdfPath) : pdfPath;
+
 			//TODO threading the process
 
-			var localpath = pdfPath.IsDistantUrl () ? this.DownloadTemporary (pdfPath) : pdfPath;
+			#if DROID
+			var f = new Java.IO.File(localpath);
+			var fd = Android.OS.ParcelFileDescriptor.Open(f,Android.OS.ParcelFileMode.ReadOnly);
+			var pdf = new PdfRenderer (fd);
+			#else
 			var pdf = CGPDFDocument.FromFile (localpath);
+			#endif
 
-			var path = GetLocalPath(pdfPath);
+			var path = GetLocalPath(pdfPath, !cachePirority);
 			var pagesPaths = this.Render (pdf, path);
 
-			return new PdfDocument () 
+			return new Plugin.Pdf.Abstractions.PdfDocument () 
 			{
 				Pages = pagesPaths.Select ((p) => new PdfPage () { Path = p }),
 			};
 		}
 
-		public Task<PdfDocument> GetRasterized (string pdfPath)
+		public Task<Plugin.Pdf.Abstractions.PdfDocument> GetRasterized (string pdfPath)
 		{
-			var path = GetLocalPath(pdfPath);
+			var path = GetLocalPath(pdfPath,false);
 			var metaPath = string.Format ("{0}/{1}", path.TrimEnd (new char[] { '/', '\\' }), MetaFile);
 			if (File.Exists (metaPath)) 
 			{
-				var rendered = Directory.GetFiles (path).Where ((p) => Path.GetFileName(p) != MetaFile);
+				var files = Directory.GetFiles (path);
+				var rendered = files.Where ((p) => System.IO.Path.GetFileName(p) != MetaFile);
 				return Task.FromResult(new Abstractions.PdfDocument()
-				{
-					Pages = rendered.Select((p) => new Abstractions.PdfPage() { Path = p }),
+					{
+						Pages = rendered.Select((p) => new Abstractions.PdfPage() { Path = p }),
 					});
 			}
 
-			return null;
+			return Task.FromResult((Abstractions.PdfDocument)null);
 		}
 
 		#region Download and render
 
-		private string DownloadTemporary (string url)
+		private async Task<string> DownloadTemporary (string url)
 		{
+			#if DROID
+			var tmp = Application.Context.CacheDir.Path;
+			#else
 			var documents = NSFileManager.DefaultManager.GetUrls(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomain.User)[0].Path;
-
 			var tmp = Path.Combine(documents, "../", "tmp");
+			#endif
 
 			var tempName = System.IO.Path.Combine (tmp, String.Format ("{0}.pdf", Guid.NewGuid ().ToString ("N")));
 
-			var webClient = new WebClient ();
-			webClient.DownloadFile (new Uri (url), tempName);
+
+			using (var webClient = new WebClient ()) 
+			{
+				var tcs = new TaskCompletionSource<AsyncCompletedEventArgs>();
+
+				AsyncCompletedEventHandler handler = null;
+				handler = (sender, args) => {
+					tcs.SetResult(args);
+					webClient.DownloadFileCompleted -= handler;
+				};
+
+				webClient.DownloadFileCompleted += handler;
+				webClient.DownloadFileAsync (new Uri (url), tempName);
+
+				var r = await tcs.Task;
+
+				if (r.Error != null) {
+					throw r.Error;
+				}
+
+				if (r.Cancelled) {
+					throw new OperationCanceledException ();
+				}
+			}
 
 			return tempName;
 		}
