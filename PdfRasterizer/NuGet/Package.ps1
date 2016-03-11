@@ -41,6 +41,9 @@ if($LASTEXITCODE -ne 0) {
 
 # NuGet publishing
 
-$nupkg = "Xam.Plugin.PdfRasterizer.$version.nupkg"
-& $NUGET_EXE push $nupkg $apikey
+$confirmation = Read-Host "Are you sure you want to publish the package ? [y/N]"
+if ([string]::Compare($confirmation,'y',$True)) {
+    $nupkg = "Xam.Plugin.PdfRasterizer.$version.nupkg"
+    & $NUGET_EXE push $nupkg $apikey
+}
 

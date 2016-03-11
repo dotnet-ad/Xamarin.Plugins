@@ -8,7 +8,7 @@
        <owners>Aloïs Deniel</owners>
      <licenseUrl>https://github.com/aloisdeniel/Xamarin.Plugins/blob/develop/LICENSE</licenseUrl>
      <projectUrl>https://github.com/aloisdeniel/Xamarin.Plugins</projectUrl>
-     <iconUrl>https://raw.githubusercontent.com/aloisdeniel/Xamarin.Plugins/master/Pdf/Common/icon.png</iconUrl>
+     <iconUrl>https://raw.githubusercontent.com/aloisdeniel/Xamarin.Plugins/master/PdfRasterizer/Common/icon.png</iconUrl>
        <requireLicenseAcceptance>false</requireLicenseAcceptance>
        <description>Renders PDF files to images</description>
        <summary>Renders PDF files to images</summary>

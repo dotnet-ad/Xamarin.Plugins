@@ -1,6 +1,7 @@
 ﻿{
   "dependencies": {
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.0.0",
+    "Xam.Plugin.PdfRasterizer": "0.3.2",
     "Xamarin.Forms": "2.0.0.6482"
   },
   "frameworks": {
