@@ -109,11 +109,17 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\SharedAssemblyInfo.cs">
+      <Link>Properties\SharedAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="..\Plugin.PdfRasterizer.WindowsStore\Hash.cs">
       <Link>Hash.cs</Link>
     </Compile>
     <Compile Include="..\Plugin.PdfRasterizer.WindowsStore\PdfRasterizerImplementation.cs">
       <Link>PdfRasterizerImplementation.cs</Link>
+    </Compile>
+    <Compile Include="..\Plugin.PdfRasterizer\CrossPdfRasterizer.cs">
+      <Link>CrossPdfRasterizer.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Plugin.Pdf.UWP.rd.xml" />
