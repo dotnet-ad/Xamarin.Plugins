@@ -141,6 +141,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Plugin.PdfRasterizer, Version=0.3.5.0, Culture=en, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Xam.Plugin.PdfRasterizer.0.3.5.0\lib\win8\Plugin.PdfRasterizer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Plugin.PdfRasterizer.Abstractions, Version=0.3.5.0, Culture=en, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Xam.Plugin.PdfRasterizer.0.3.5.0\lib\win8\Plugin.PdfRasterizer.Abstractions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Xamarin.Forms.Core, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Xamarin.Forms.2.0.0.6482\lib\win81\Xamarin.Forms.Core.dll</HintPath>
       <Private>True</Private>
