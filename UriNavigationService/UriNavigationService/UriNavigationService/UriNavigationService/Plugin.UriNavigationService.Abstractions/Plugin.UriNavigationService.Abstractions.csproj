@@ -38,12 +38,14 @@
     <!-- A reference to the entire .NET Framework is automatically included -->
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\NavigationContextAttribute.cs" />
+    <Compile Include="Actions\RelayNavigationAction.cs" />
+    <Compile Include="Attributes\NavigationViewAttribute.cs" />
     <Compile Include="Attributes\NavigationQueryAttribute.cs" />
     <Compile Include="Attributes\NavigationSegmentAttribute.cs" />
     <Compile Include="Attributes\NavigationUriAttribute.cs" />
+    <Compile Include="Actions\INavigationAction.cs" />
     <Compile Include="IUriNavigationService.cs" />
-    <Compile Include="NavigationAction.cs" />
+    <Compile Include="Actions\NavigationActionBase.cs" />
     <Compile Include="NavigationParam.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UriExtensions.cs" />

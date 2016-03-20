@@ -17,7 +17,7 @@ namespace Plugin.UriNavigationService
         public static void RegisterActivity<T>(this IUriNavigationService service)
         {
             var activity = typeof(T);
-            var attribute = (NavigationContextAttribute)activity.GetTypeInfo().GetCustomAttribute(typeof(NavigationContextAttribute));
+            var attribute = (NavigationViewAttribute)activity.GetTypeInfo().GetCustomAttribute(typeof(NavigationViewAttribute));
             if (attribute == null) throw new ArgumentException("The activity type should have a \"NavigationContextAttribute\" attribute.");
         }
     }
