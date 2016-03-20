@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Plugin.UriNavigationService.Abstractions
+﻿namespace Plugin.UriNavigationService.Abstractions
 {
+    using System;
+    using System.Collections.Generic;
+
     public static class UriExtensions
     {
         public static Dictionary<string,string> GetQueryValues(this string uri)

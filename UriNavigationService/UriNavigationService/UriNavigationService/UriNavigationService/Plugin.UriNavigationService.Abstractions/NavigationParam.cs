@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Plugin.UriNavigationService.Abstractions
+﻿namespace Plugin.UriNavigationService.Abstractions
 {
+    using System;
+    using System.Linq;
+    using System.Reflection;
+
     public class NavigationParam
     {
         public NavigationParam(string name, Type type, PropertyInfo property)

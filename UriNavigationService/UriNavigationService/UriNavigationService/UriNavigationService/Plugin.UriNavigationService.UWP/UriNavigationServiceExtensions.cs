@@ -17,24 +17,6 @@ namespace Plugin.UriNavigationService
         {
             return service.GetViewContext(navigationArgs as string);
         }
-
-        public static void RegisterPage<T>(this IUriNavigationService service)
-        {
-            var page = typeof(T);
-            var attribute = (NavigationContextAttribute)page.GetTypeInfo().GetCustomAttribute(typeof(NavigationContextAttribute));
-            if (attribute == null) throw new ArgumentException("The page type should have a \"NavigationContextAttribute\" attribute.");
-
-            service.RegisterView(attribute.ContextType, (a) =>
-            {
-                var frame = (Frame)Window.Current.Content;
-                frame.Navigate(page, a);
-                return Task.FromResult(true);
-            }, () =>
-             {
-                 var frame = (Frame)Window.Current.Content;
-                 frame.GoBack();
-                 return Task.FromResult(true);
-             });
-        }
+        
     }
 }

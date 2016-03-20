@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace Plugin.UriNavigationService.Abstractions
+﻿namespace Plugin.UriNavigationService.Abstractions
 {
-  /// <summary>
-  /// Interface for UriNavigationService
-  /// </summary>
-  public interface IUriNavigationService
+    using Actions;
+    using System;
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+
+    /// <summary>
+    /// Interface for UriNavigationService
+    /// </summary>
+    public interface IUriNavigationService
   {
         IEnumerable<string> History { get; }
 
@@ -22,7 +23,9 @@ namespace Plugin.UriNavigationService.Abstractions
         /// <param name="context">The context type that must be marked with a NavigationUriAttribute.</param>
         /// <param name="push">The action called when navigating to the view.</param>
         /// <param name="pop">The action called when exiting the view.</param>
-        void RegisterView(Type context, Func<string, Task> push, Func<Task> pop);
+        void Register(INavigationAction action);
+
+        INavigationAction CreateCustomAction(Type context, Func<string,Task> push, Func<Task> pop);
 
         /// <summary>
         /// Called when a view just appeared, to get its context and update context's navigation param properties values.
