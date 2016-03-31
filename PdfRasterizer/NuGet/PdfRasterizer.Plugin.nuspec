@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
    <metadata minClientVersion="2.8.1">
        <id>Xam.Plugin.PdfRasterizer</id>
@@ -60,10 +60,10 @@
      <file src="..\PdfRasterizer\PdfRasterizer\Plugin.PdfRasterizer.Abstractions\bin\Release\Plugin.PdfRasterizer.Abstractions.pdb" target="lib\MonoAndroid10\Plugin.PdfRasterizer.Abstractions.pdb" />
 
      <!--Xamarin.iOS-->
-     <file src="..\PdfRasterizer\PdfRasterizer\Plugin.PdfRasterizer.iOS\bin\iPhone\Release\Plugin.PdfRasterizer.dll" target="lib\MonoTouch10\Plugin.PdfRasterizer.dll" />
-     <file src="..\PdfRasterizer\PdfRasterizer\Plugin.PdfRasterizer.iOS\bin\iPhone\Release\Plugin.PdfRasterizer.xml" target="lib\MonoTouch10\Plugin.PdfRasterizer.xml" />
-     <file src="..\PdfRasterizer\PdfRasterizer\Plugin.PdfRasterizer.Abstractions\bin\Release\Plugin.PdfRasterizer.Abstractions.dll" target="lib\MonoTouch10\Plugin.PdfRasterizer.Abstractions.dll" />
-     <file src="..\PdfRasterizer\PdfRasterizer\Plugin.PdfRasterizer.Abstractions\bin\Release\Plugin.PdfRasterizer.Abstractions.xml" target="lib\MonoTouch10\Plugin.PdfRasterizer.Abstractions.xml" />
+     <file src="..\PdfRasterizer\PdfRasterizer\Plugin.PdfRasterizer.iOS\bin\iPhone\Release\Plugin.PdfRasterizer.dll" target="lib\Xamarin.iOS10\Plugin.PdfRasterizer.dll" />
+     <file src="..\PdfRasterizer\PdfRasterizer\Plugin.PdfRasterizer.iOS\bin\iPhone\Release\Plugin.PdfRasterizer.xml" target="lib\Xamarin.iOS10\Plugin.PdfRasterizer.xml" />
+     <file src="..\PdfRasterizer\PdfRasterizer\Plugin.PdfRasterizer.Abstractions\bin\Release\Plugin.PdfRasterizer.Abstractions.dll" target="lib\Xamarin.iOS10\Plugin.PdfRasterizer.Abstractions.dll" />
+     <file src="..\PdfRasterizer\PdfRasterizer\Plugin.PdfRasterizer.Abstractions\bin\Release\Plugin.PdfRasterizer.Abstractions.xml" target="lib\Xamarin.iOS10\Plugin.PdfRasterizer.Abstractions.xml" />
 
      <!--UWP-->
      <file src="..\PdfRasterizer\PdfRasterizer\Plugin.PdfRasterizer.UWP\bin\Release\Plugin.PdfRasterizer.dll" target="lib\UAP10\Plugin.PdfRasterizer.dll" />

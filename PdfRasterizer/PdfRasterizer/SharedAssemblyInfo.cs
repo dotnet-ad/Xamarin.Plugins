@@ -1,8 +1,8 @@
 ﻿using System.Resources;
 using System.Reflection;
 
-[assembly: AssemblyVersion("0.3.5.0")]
-[assembly: AssemblyFileVersion("0.3.5.0")]
+[assembly: AssemblyVersion("0.3.6.0")]
+[assembly: AssemblyFileVersion("0.3.6.0")]
 [assembly: AssemblyCompany("Aloïs Deniel")]
 [assembly: AssemblyProduct("Plugin.PdfRasterizer")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
