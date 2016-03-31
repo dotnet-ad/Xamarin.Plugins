@@ -157,43 +157,50 @@ namespace Plugin.PdfRasterizer
 			return result;
 		}
 
-		public async Task<Abstractions.PdfDocument> Rasterize (string pdfPath, bool cachePirority = true)
-		{
-			if(cachePirority)
-			{
-				var existing = await GetRasterized(pdfPath);
-				if(existing != null)
-				{
-					Debug.WriteLine("Using cached images ...");
+        private async Task<Abstractions.PdfDocument> RasterizeBackgroundAsync(string pdfPath, bool cachePirority = true)
+        {
+            if (cachePirority)
+            {
+                var existing = await GetRasterizedAsync(pdfPath);
+                if (existing != null)
+                {
+                    Debug.WriteLine("Using cached images ...");
 
-					return existing;
-				}
-			}
+                    return existing;
+                }
+            }
 
-			Debug.WriteLine("Downloading and generating again ...");
+            Debug.WriteLine("Downloading and generating again ...");
 
-			var localpath = pdfPath.IsDistantUrl () ? await this.DownloadTemporary (pdfPath) : pdfPath;
+            var localpath = pdfPath.IsDistantUrl() ? await this.DownloadTemporary(pdfPath) : pdfPath;
 
-			//TODO threading the process
+            //TODO threading the process
 
-			#if DROID
-			var f = new Java.IO.File(localpath);
-			var fd = Android.OS.ParcelFileDescriptor.Open(f,Android.OS.ParcelFileMode.ReadOnly);
-			var pdf = new PdfRenderer (fd);
-			#else
+#if DROID
+            var f = new Java.IO.File(localpath);
+            var fd = Android.OS.ParcelFileDescriptor.Open(f, Android.OS.ParcelFileMode.ReadOnly);
+            var pdf = new PdfRenderer(fd);
+#else
 			var pdf = CGPDFDocument.FromFile (localpath);
-			#endif
+#endif
 
-			var path = GetLocalPath(pdfPath, !cachePirority);
-			var pagesPaths = this.Render (pdf, path);
+            var path = GetLocalPath(pdfPath, !cachePirority);
+            var pagesPaths = this.Render(pdf, path);
 
-			return new Plugin.PdfRasterizer.Abstractions.PdfDocument () 
-			{
-				Pages = pagesPaths.Select ((p) => new PdfPage () { Path = p }),
-			};
+            return new Plugin.PdfRasterizer.Abstractions.PdfDocument()
+            {
+                Pages = pagesPaths.Select((p) => new PdfPage() { Path = p }),
+            };
+        }
+
+
+        public Task<Abstractions.PdfDocument> RasterizeAsync(string pdfPath, bool cachePirority = true)
+		{
+            // Runs the rendering process in a background task.
+            return Task.Run(() => RasterizeBackgroundAsync(pdfPath,cachePirority));
 		}
 
-		public Task<Plugin.PdfRasterizer.Abstractions.PdfDocument> GetRasterized (string pdfPath)
+		public Task<Plugin.PdfRasterizer.Abstractions.PdfDocument> GetRasterizedAsync(string pdfPath)
 		{
 			var path = GetLocalPath(pdfPath,false);
 			var metaPath = string.Format ("{0}/{1}", path.TrimEnd (new char[] { '/', '\\' }), MetaFile);
